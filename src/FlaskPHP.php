@@ -2,6 +2,21 @@
 
 class FlaskPHP
 {
+    private static $requestMethod = NULL;
+    private static $params = NULL;
+
+    public static function init()
+    {
+        self::$requestMethod = strtoupper($_SERVER['REQUEST_METHOD']);
+
+        if (self::$requestMethod != 'GET') {
+            parse_str(file_get_contents("php://input"), self::$params);
+        }
+        else {
+            self::$params = $_GET;
+        }
+    }
+
     private $name;
     private $routes = array();
 
@@ -35,3 +50,5 @@ class FlaskPHP
 
     }
 }
+
+FlaskPHP::init();
