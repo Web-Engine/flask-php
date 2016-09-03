@@ -1,6 +1,9 @@
 <?php
 
 require_once 'Response.php';
+require_once 'Template.php';
+
+require_once 'Utils.php';
 
 class FlaskPHP
 {
