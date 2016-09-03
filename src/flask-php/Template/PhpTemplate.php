@@ -1,5 +1,6 @@
 <?php
 namespace FlaskPHP\Template;
+use FlaskPHP\Template;
 
 abstract class PhpTemplate extends Template
 {
