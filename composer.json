@@ -16,5 +16,13 @@
   "require": {
     "php": ">=5.2.7",
     "twig/twig": "v1.24.1"
+  },
+  "autoload": {
+    "files": [
+      "lib/flask-php/Utils.php"
+    ],
+    "psr-4": {
+      "FlaskPHP\\": "lib/flask-php/"
+    }
   }
 }
