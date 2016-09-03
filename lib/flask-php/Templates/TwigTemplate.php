@@ -1,4 +1,6 @@
 <?php
+namespace FlaskPHP\Template;
+
 require_once '../Template.php';
 
 class TwigTemplate extends Template {

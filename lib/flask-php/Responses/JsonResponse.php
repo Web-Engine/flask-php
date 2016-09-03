@@ -1,4 +1,6 @@
 <?php
+namespace FlaskPHP\Response;
+
 require_once '../Response.php';
 
 class JsonResponse extends Response {

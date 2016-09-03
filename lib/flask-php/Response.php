@@ -1,4 +1,5 @@
 <?php
+namespace FlaskPHP;
 
 abstract class Response {
     private $content = '';

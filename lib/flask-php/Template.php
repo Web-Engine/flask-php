@@ -1,4 +1,6 @@
 <?php
+namespace FlaskPHP;
+
 abstract class Template {
     public static function getCallerPath($path, $count = 3)  {
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $count);
