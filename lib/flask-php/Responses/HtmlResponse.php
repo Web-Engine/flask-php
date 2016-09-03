@@ -1,8 +1,6 @@
 <?php
 namespace FlaskPHP\Response;
 
-require_once '../Response.php';
-
 class HtmlResponse extends Response
 {
     public function __construct($html)

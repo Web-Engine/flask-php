@@ -1,8 +1,6 @@
 <?php
 namespace FlaskPHP\Template;
 
-require_once '../Template.php';
-
 abstract class PhpTemplate extends Template
 {
     public static function render($path, $params) {

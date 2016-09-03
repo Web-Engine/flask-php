@@ -1,11 +1,6 @@
 <?php
 namespace FlaskPHP;
 
-require_once 'Response.php';
-require_once 'Template.php';
-
-require_once 'Utils.php';
-
 class FlaskPHP
 {
     private static $requestMethod = NULL;
