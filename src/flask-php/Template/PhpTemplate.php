@@ -3,10 +3,9 @@ namespace FlaskPHP\Template;
 
 abstract class PhpTemplate extends Template
 {
-    public static function render($path, $params) {
+    public static function __render($path, $params)
+    {
         extract($params);
-
-        $path = parent::getCallerPath($path);
 
         ob_start();
         include $path;
