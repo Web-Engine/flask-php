@@ -1,7 +1,7 @@
 <?php
 namespace FlaskPHP;
 
-abstract class Response {
+class Response {
     private $content = '';
     private $contentType = '';
     private $contentLength = 0;
