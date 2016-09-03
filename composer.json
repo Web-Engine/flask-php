@@ -1,0 +1,19 @@
+{
+  "name": "webengine/flask-php",
+  "type": "library",
+  "description": "",
+  "keywords": [
+    "flask"
+  ],
+  "homepage": "http://github.com/web-engine/flask-php",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jo Tae Sang",
+      "email": "gsts007@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.2.7"
+  }
+}
