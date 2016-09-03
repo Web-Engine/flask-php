@@ -134,7 +134,7 @@ class FlaskPHP
         }
         else
         {
-            $result = new HtmlResponse('Cannot found a page');
+            $result = new Response('Cannot found a page');
         }
 
         if ($result instanceof Response) {
