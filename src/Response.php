@@ -2,14 +2,12 @@
 
 abstract class Response {
     private $content = '';
-    private $contentType = 'text/html';
+    private $contentType = '';
     private $contentLength = 0;
     private $charset = NULL;
 
-    public function __construct($content, $contentType, $charset = 'utf-8') {
-        $this->content = $content;
-        $this->contentType = $contentType;
-        $this->charset = $charset;
+    public function __construct($content, $contentType = 'text/html', $charset = 'utf-8') {
+        $this->setContent($content, $contentType, $charset);
     }
 
     public function getContent() {
