@@ -67,6 +67,7 @@ class FlaskPHP
         }
 
         $targetDef = null;
+        $params = null;
 
         foreach ($this->routes as $rule => $defs)
         {
@@ -78,7 +79,7 @@ class FlaskPHP
             for ($i = 0; $i < $count; $i++) {
                 $text = $matches[0][$i];
                 $converter = $matches[1][$i];
-                $name = $matches[2][$i];
+//                $name = $matches[2][$i];
 
                 switch ($converter) {
                     case 'int':
@@ -106,7 +107,7 @@ class FlaskPHP
                         break;
                 }
 
-                $rule = preg_replace('@' . $text . '@', $regex);
+                $rule = preg_replace('@' . $text . '@', $regex, $rule);
             }
 
             if (preg_match('@^/?' . $rule . '/?$@', $path, $matches))
