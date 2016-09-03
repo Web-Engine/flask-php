@@ -135,8 +135,7 @@ class FlaskPHP
         }
         else
         {
-            // Todo: Response - Cannot found a page
-            $result = new MessageResponse('Cannot found a page');
+            $result = new HtmlResponse('Cannot found a page');
         }
 
         if ($result instanceof Response) {
