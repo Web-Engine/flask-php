@@ -1,5 +1,7 @@
 <?php
 
+require_once 'Response.php';
+
 class FlaskPHP
 {
     private static $requestMethod = NULL;
@@ -134,14 +136,16 @@ class FlaskPHP
         else
         {
             // Todo: Response - Cannot found a page
-            $result = new Response();
+            $result = new MessageResponse('Cannot found a page');
         }
 
         if ($result instanceof Response) {
-            $type = $result->getMimeType();
+            $type = $result->getContentType();
+            $content = $result->getContent();
         }
         else {
             $type = 'text/html';
+            $content = $result;
         }
 
         header('Content-type: ' . $type . '; charset=utf-8');
@@ -150,7 +154,7 @@ class FlaskPHP
         header('Cache-Control: no-store, no-cache, must-revalidate');
         header('Cache-Control: post-check=0, pre-check=0', false);
         header('Pragma: no-cache');
-        echo $result;
+        echo $content;
         exit;
     }
 }
