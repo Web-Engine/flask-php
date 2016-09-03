@@ -1,5 +1,6 @@
 <?php
 namespace FlaskPHP\Response;
+use FlaskPHP\Response;
 
 class JsonResponse extends Response {
     public function __construct($data)

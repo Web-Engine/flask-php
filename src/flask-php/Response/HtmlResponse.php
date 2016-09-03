@@ -1,5 +1,6 @@
 <?php
 namespace FlaskPHP\Response;
+use FlaskPHP\Response;
 
 class HtmlResponse extends Response
 {
