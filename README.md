@@ -36,7 +36,6 @@ Cannot use without composer
 
     <?php
     use FlaskPHP\FlaskPHP;
-    use FlaskPHP\Template\TwigTemplate;
     
     $app = new FlaskPHP();
     
