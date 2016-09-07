@@ -44,8 +44,7 @@ Cannot use without composer
         return 'This is test.';
     });
     
-    $app->route('/members/<int:member_id>', function($member_id) {
-        return TwigTemplate::render('member.html', array(
-            'member_id' => $member_id
-        ));
+    $app->route('/members/<name>',
+    function($name) {
+        return render_template('member.html', ['name' => $name]);
     });
