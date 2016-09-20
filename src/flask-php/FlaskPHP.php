@@ -18,12 +18,12 @@ class FlaskPHP
         }
     }
 
-    private $name;
+    private $dir;
     private $routes = array();
 
-    public function __construct($name)
+    public function __construct($dir)
     {
-        $this->name = $name;
+        $this->dir = $dir;
     }
 
     public function route($rule, $def, $methods = NULL)
@@ -43,7 +43,7 @@ class FlaskPHP
 
         $methods = strtoupper($methods);
 
-        $this->route[$rule][$methods] = $def;
+        $this->routes[$rule][$methods] = $def;
     }
 
     public function run()
@@ -74,7 +74,7 @@ class FlaskPHP
 //          preg_match_all('@<(?:(string|int|float|rule|any|uuid):)?([a-zA-Z0-9_]+)>@', $rule, $matches);
             preg_match_all('@<(?:(string|int|float|rule|uuid):)?([a-zA-Z0-9_]+)>@', $rule, $matches);
 
-            $count = array($matches[0]);
+            $count = count($matches[0]);
 
             for ($i = 0; $i < $count; $i++) {
                 $text = $matches[0][$i];
