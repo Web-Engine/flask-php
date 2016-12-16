@@ -1,6 +1,9 @@
 <?php
 namespace FlaskPHP;
 
+use Exception;
+use ReflectionFunction;
+
 class FlaskPHP
 {
     private static $requestMethod = NULL;
@@ -115,13 +118,14 @@ class FlaskPHP
             $checkPath = dirname($checkPath);
         }
 
-        $route = null;
+        $routeFunc = null;
+        $routeParam = null;
         $params = null;
 
         foreach ($this->routes as $rule => $func)
         {
             $rule = preg_quote($rule);
-            preg_match_all('@\\\<(?:(string|int|float|rule|uuid)\:)?([a-zA-Z_][a-zA-Z0-9_]*)\\\>@', $rule, $matches);
+            preg_match_all('@\\\<(?:(string|int|float|rule|uuid)\\\:)?([a-zA-Z_][a-zA-Z0-9_]*)\\\>@', $rule, $matches);
 
             $count = count($matches[0]);
             $patterns = [];
@@ -137,7 +141,7 @@ class FlaskPHP
                         break;
 
                     case 'float':
-                        $regex = '(\d+\.?\d+)';
+                        $regex = '(\d*\.?\d*)';
                         break;
 
                     case 'path':
@@ -148,9 +152,14 @@ class FlaskPHP
                         $regex = '([A-Fa-f0-9]{8}\-[A-Fa-f0-9]{4}\-[A-Fa-f0-9]{4}\-[A-Fa-f0-9]{4}\-[A-Fa-f0-9]{12})';
                         break;
 
+                    case '':
                     case 'string':
-                    default:
+                        $type = 'string';
                         $regex = '([^/]+)';
+                        break;
+
+                    default:
+                        $regex = $type;
                         break;
                 }
 
@@ -167,40 +176,54 @@ class FlaskPHP
                 array_shift($values);
                 $params = [];
 
-                $count = count($values);
+                $count = count($patterns);
 
                 for ($i = 0; $i<$count; $i++) {
-                    $val = $values[$i];
+                    $value = $values[$i];
 
-                    if (isset($names[$i])) {
-                        $params[$names[$i]] = $val;
-                    } else {
-                        array_push($params, $val);
+                    $pattern = $patterns[$i];
+                    $name = $pattern['name'];
+                    $type = $pattern['type'];
+
+                    switch ($type) {
+                        case 'int':
+                            $value = (int)$value;
+                            break;
+
+                        case 'float':
+                            $value = (float)$value;
+                            break;
                     }
+
+                    $params[$name] = $value;
                 }
+
+                $routeParam = $params;
 
                 if (isset($func[self::$requestMethod]))
                 {
-                    $route = [
-                        'func'=> $func[self::$requestMethod],
-                        'params'=> $params
-                    ];
+                    $routeFunc = $func[self::$requestMethod];
                     break;
                 }
                 else if (isset($func[NULL]))
                 {
-                    $route = [
-                        'func'=> $func[NULL],
-                        'params'=> $params
-                    ];
+                    $routeFunc = $func[NULL];
                     break;
                 }
             }
         }
 
-        if ($route)
+        if ($routeFunc)
         {
-            $result = call_user_func_array($route['func'], $route['params']);
+            $reflect = new ReflectionFunction($routeFunc);
+            $params = [];
+
+            foreach ($reflect->getParameters() as $param) {
+                $name = $param->getName();
+                array_push($params, $routeParam[$name]);
+            }
+
+            $result = call_user_func_array($routeFunc, $params);
         }
         else
         {
