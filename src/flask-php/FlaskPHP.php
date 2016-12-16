@@ -115,20 +115,23 @@ class FlaskPHP
             $checkPath = dirname($checkPath);
         }
 
-        $routeFunc = null;
+        $route = null;
         $params = null;
 
         foreach ($this->routes as $rule => $func)
         {
-            preg_match_all('@<(?:(string|int|float|rule|uuid):)?([a-zA-Z0-9_]+)>@', $rule, $matches);
+            $rule = preg_quote($rule);
+            preg_match_all('@\\\<(?:(string|int|float|rule|uuid)\:)?([a-zA-Z_][a-zA-Z0-9_]*)\\\>@', $rule, $matches);
 
             $count = count($matches[0]);
+            $patterns = [];
 
             for ($i = 0; $i < $count; $i++) {
-                $text = $matches[0][$i];
-                $converter = $matches[1][$i];
+                $text = preg_quote($matches[0][$i]);
+                $type = $matches[1][$i];
+                $name = $matches[2][$i];
 
-                switch ($converter) {
+                switch ($type) {
                     case 'int':
                         $regex = '(\d+)';
                         break;
@@ -142,7 +145,7 @@ class FlaskPHP
                         break;
 
                     case 'uuid':
-                        $regex = '([A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12})';
+                        $regex = '([A-Fa-f0-9]{8}\-[A-Fa-f0-9]{4}\-[A-Fa-f0-9]{4}\-[A-Fa-f0-9]{4}\-[A-Fa-f0-9]{12})';
                         break;
 
                     case 'string':
@@ -152,30 +155,52 @@ class FlaskPHP
                 }
 
                 $rule = preg_replace('@' . $text . '@', $regex, $rule);
+
+                array_push($patterns, [
+                    'name'=> $name,
+                    'type'=> $type
+                ]);
             }
 
-            if (preg_match('@^/?' . $rule . '/?$@', $requestPath, $matches))
+            if (preg_match('@^/?' . $rule . '/?$@', $requestPath, $values))
             {
+                array_shift($values);
+                $params = [];
+
+                $count = count($values);
+
+                for ($i = 0; $i<$count; $i++) {
+                    $val = $values[$i];
+
+                    if (isset($names[$i])) {
+                        $params[$names[$i]] = $val;
+                    } else {
+                        array_push($params, $val);
+                    }
+                }
+
                 if (isset($func[self::$requestMethod]))
                 {
-                    $routeFunc = $func[self::$requestMethod];
-                    $params = $matches;
-                    unset($params[0]);
+                    $route = [
+                        'func'=> $func[self::$requestMethod],
+                        'params'=> $params
+                    ];
+                    break;
                 }
                 else if (isset($func[NULL]))
                 {
-                    $routeFunc = $func[NULL];
-                    $params = $matches;
-                    unset($params[0]);
+                    $route = [
+                        'func'=> $func[NULL],
+                        'params'=> $params
+                    ];
+                    break;
                 }
-
-                break;
             }
         }
 
-        if ($routeFunc)
+        if ($route)
         {
-            $result = call_user_func_array($routeFunc, $params);
+            $result = call_user_func_array($route['func'], $route['params']);
         }
         else
         {
