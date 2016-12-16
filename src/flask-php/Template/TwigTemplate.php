@@ -1,21 +1,22 @@
 <?php
 namespace FlaskPHP\Template;
 use FlaskPHP\Template;
+use Twig_Loader_Filesystem;
+use Twig_Environment;
 
 class TwigTemplate extends Template
 {
     private static $cachePath = NULL;
 
-    public static function __render($path, $params)
+    protected static function _render($path, $params = array())
     {
         $dir = dirname($path);
         $file = basename($path);
 
         $loader = new Twig_Loader_Filesystem($dir);
 
-        $options = array();
-        if (self::$cachePath)
-        {
+        $options = [];
+        if (self::$cachePath !== NULL) {
             $options['cache'] = self::$cachePath;
         }
 

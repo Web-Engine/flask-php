@@ -1,15 +1,31 @@
 <?php
 namespace FlaskPHP;
 
+use Exception;
+
 abstract class Template
 {
-    public static function render($path, $params, $count = 0)
+    private static function getPath($path)
     {
-        $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $count + 2);
-        $callerDir = dirname($backtrace[$count + 1]['file']);
+        $count = 3;
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $count);
 
-        return self::__render($callerDir . '/' . $path, $params);
+        do {
+            $count--;
+        } while (!isset($backtrace[$count]['file']));
+
+        $callerDir = dirname($backtrace[$count]['file']);
+
+        return $callerDir . '/' . $path;
     }
 
-    public abstract static function __render($path, $params);
+    public static function render($path, $params = array()) {
+        $path = self::getPath($path);
+
+        return static::_render($path, $params);
+    }
+
+    protected static function _render($path, $params = array()) {
+        throw new Exception('Cannot use Template\'s render method.');
+    }
 }

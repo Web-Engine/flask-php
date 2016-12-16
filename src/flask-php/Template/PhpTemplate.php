@@ -2,9 +2,9 @@
 namespace FlaskPHP\Template;
 use FlaskPHP\Template;
 
-abstract class PhpTemplate extends Template
+class PhpTemplate extends Template
 {
-    public static function __render($path, $params)
+    protected static function _render($path, $params = array())
     {
         extract($params);
 
