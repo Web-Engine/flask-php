@@ -5,27 +5,15 @@ use ReflectionFunction;
 
 class FlaskPHP
 {
-    private static $requestMethod = NULL;
-    private static $params = NULL;
-
-    public static function init()
-    {
-        self::$requestMethod = strtoupper($_SERVER['REQUEST_METHOD']);
-
-        if (self::$requestMethod != 'GET') {
-            parse_str(file_get_contents("php://input"), self::$params);
-        }
-        else {
-            self::$params = $_GET;
-        }
-    }
-
     private $dir;
     private $routes = [];
+
+    private $request;
 
     public function __construct($dir)
     {
         $this->dir = $dir;
+        $this->request = new Request($this->dir);
     }
 
     public function route($rule, $a, $b = NULL)
@@ -79,20 +67,7 @@ class FlaskPHP
 
     public function run()
     {
-        $requestPath = '/';
-
-        if (isset($_SERVER['REQUEST_URI']) && !empty($_SERVER['REQUEST_URI'])) {
-            $requestUri = $_SERVER['REQUEST_URI'];
-
-            $requestPath = strstr($_SERVER['REQUEST_URI'], '?', true);
-            if ($requestPath === FALSE) {
-                $requestPath = $requestUri;
-            }
-        }
-
-        $dir = preg_replace('/' . preg_quote(DIRECTORY_SEPARATOR) . '/', '/', $this->dir);
-        $dir = substr($dir, strlen($_SERVER['DOCUMENT_ROOT']));
-        $requestPath = substr($requestPath, strlen($dir));
+        $path = $this->request->path;
 
         $routeFunc = null;
         $routeParam = null;
@@ -147,7 +122,7 @@ class FlaskPHP
                 ]);
             }
 
-            if (preg_match('#^/?' . $rule . '/?$#', $requestPath, $values))
+            if (preg_match('#^/?' . $rule . '/?$#', $path, $values))
             {
                 array_shift($values);
                 $params = [];
@@ -176,9 +151,11 @@ class FlaskPHP
 
                 $routeParam = $params;
 
-                if (isset($func[self::$requestMethod]))
+                $method = $this->request->method;
+
+                if (isset($func[$method]))
                 {
-                    $routeFunc = $func[self::$requestMethod];
+                    $routeFunc = $func[$method];
                     break;
                 }
                 else if (isset($func[NULL]))
@@ -214,5 +191,3 @@ class FlaskPHP
         exit;
     }
 }
-
-FlaskPHP::init();
