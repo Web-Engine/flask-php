@@ -1,0 +1,1 @@
+Hi <?php echo $C ?>. Do you know <?php echo $A ?> or <?php echo $B ?>?

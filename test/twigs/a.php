@@ -1,1 +1,0 @@
-Hi {{ C }}. Do you know {{ A }} or {{ B }}

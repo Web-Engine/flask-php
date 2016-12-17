@@ -19,10 +19,10 @@
   },
   "autoload": {
     "files": [
-      "src/flask-php/Utils.php"
+      "src/Utils.php"
     ],
     "psr-4": {
-      "FlaskPHP\\": "src/flask-php/"
+      "FlaskPHP\\": "src/"
     }
   }
 }

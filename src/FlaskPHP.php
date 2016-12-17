@@ -1,7 +1,6 @@
 <?php
 namespace FlaskPHP;
 
-use Exception;
 use ReflectionFunction;
 
 class FlaskPHP
@@ -82,41 +81,18 @@ class FlaskPHP
     {
         $requestPath = '/';
 
-        if (!empty($_SERVER['PATH_INFO']))
-        {
-            $requestPath = $_SERVER['PATH_INFO'];
-        }
-        else if (!empty($_SERVER['ORIG_PATH_INFO']) && $_SERVER['ORIG_PATH_INFO'] !== '/index.php')
-        {
-            $requestPath = $_SERVER['ORIG_PATH_INFO'];
-        }
-        else {
-            if (!empty($_SERVER['REQUEST_URI'])) {
-                $requestPath = (strpos($_SERVER['REQUEST_URI'], '?') > 0) ? strstr($_SERVER['REQUEST_URI'], '?', true) : $_SERVER['REQUEST_URI'];
+        if (isset($_SERVER['REQUEST_URI']) && !empty($_SERVER['REQUEST_URI'])) {
+            $requestUri = $_SERVER['REQUEST_URI'];
+
+            $requestPath = strstr($_SERVER['REQUEST_URI'], '?', true);
+            if ($requestPath === FALSE) {
+                $requestPath = $requestUri;
             }
         }
 
-        $dir = implode('/', explode(DIRECTORY_SEPARATOR, $this->dir));
-
-        $checkPath = $requestPath;
-        $pos = strrpos($checkPath, '/');
-        $len = strlen($checkPath);
-        if ($pos === $len - 1) {
-            $checkPath = substr($checkPath, 0, $len - 1);
-        }
-
-        $dirLen = strlen($dir);
-        while ($checkPath != '/' && $checkPath != '') {
-            $pos = strrpos($this->dir, $checkPath);
-            $len = strlen($checkPath);
-
-            if ($pos == $dirLen - $len) {
-                $requestPath = substr($requestPath, $len);
-                break;
-            }
-
-            $checkPath = dirname($checkPath);
-        }
+        $dir = preg_replace('/' . preg_quote(DIRECTORY_SEPARATOR) . '/', '/', $this->dir);
+        $dir = substr($dir, strlen($_SERVER['DOCUMENT_ROOT']));
+        $requestPath = substr($requestPath, strlen($dir));
 
         $routeFunc = null;
         $routeParam = null;
@@ -125,7 +101,7 @@ class FlaskPHP
         foreach ($this->routes as $rule => $func)
         {
             $rule = preg_quote($rule);
-            preg_match_all('@\\\<(?:(string|int|float|rule|uuid)\\\:)?([a-zA-Z_][a-zA-Z0-9_]*)\\\>@', $rule, $matches);
+            preg_match_all('#\\\<(?:(string|int|float|rule|uuid)\\\:)?([a-zA-Z_][a-zA-Z0-9_]*)\\\>#', $rule, $matches);
 
             $count = count($matches[0]);
             $patterns = [];
@@ -163,7 +139,7 @@ class FlaskPHP
                         break;
                 }
 
-                $rule = preg_replace('@' . $text . '@', $regex, $rule);
+                $rule = preg_replace('#' . $text . '#', $regex, $rule);
 
                 array_push($patterns, [
                     'name'=> $name,
@@ -171,7 +147,7 @@ class FlaskPHP
                 ]);
             }
 
-            if (preg_match('@^/?' . $rule . '/?$@', $requestPath, $values))
+            if (preg_match('#^/?' . $rule . '/?$#', $requestPath, $values))
             {
                 array_shift($values);
                 $params = [];

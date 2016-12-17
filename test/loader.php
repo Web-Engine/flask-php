@@ -39,7 +39,7 @@ function getPHPFiles($path, $debug = false) {
     return $files;
 }
 
-$files = getPHPFiles('../src/flask-php');
+$files = getPHPFiles('../src');
 usort($files, function ($a, $b) {
     $ca = substr_count($a, DIRECTORY_SEPARATOR);
     $cb = substr_count($b, DIRECTORY_SEPARATOR);

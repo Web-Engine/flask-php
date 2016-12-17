@@ -1,5 +1,4 @@
 <?php
-require_once 'loader.php';
 require_once '../vendor/autoload.php';
 
 use FlaskPHP\FlaskPHP;
@@ -13,7 +12,7 @@ $app->route('/', function () {
 });
 
 $app->route('/twig', function () {
-    return TwigTemplate::render('twigs/a.php', [
+    return TwigTemplate::render('twigs/a.twig', [
         'A'=>'Apple',
         'B'=>'Banana',
         'C'=>'Cup'
@@ -21,23 +20,31 @@ $app->route('/twig', function () {
 });
 
 $app->route('/php', function () {
-    return PhpTemplate::render('twigs/a.php', [
+    return PhpTemplate::render('phps/a.php', [
         'A'=>'Apple',
         'B'=>'Banana',
         'C'=>'Cup'
     ]);
 });
 
+$app->get('/get/<int:int>', function ($int) {
+    var_dump($int);
+});
+
+$app->get('/get/<float:float>', function ($float) {
+    var_dump($float);
+});
+
 $app->get('/get/<string:str>', function ($str) {
     return $str;
 });
 
-$app->post('/post/<str>', function ($str) {
-    return $str;
+$app->post('/post/<int:int>', function ($int) {
+    return $int;
 });
 
-$app->delete('/delete/<str>', function ($str) {
-    return $str;
+$app->delete('/delete/<float:float>', function ($float) {
+    return $float;
 });
 
 $app->run();
