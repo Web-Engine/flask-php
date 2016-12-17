@@ -28,7 +28,7 @@ $app->route('/php', function () {
 });
 
 $app->get('/get/<int:int>', function ($int) {
-    var_dump($int);
+    return redirect('/flask-php/test/php');
 });
 
 $app->get('/get/<float:float>', function ($float) {
