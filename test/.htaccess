@@ -1,0 +1,19 @@
+#<IfModule mod_rewrite.c>
+#    <IfModule mod_negotiation.c>
+#        Options -MultiViews
+#    </IfModule>
+
+    RewriteEngine On
+
+#    RedirectMatch 403 ^/\.(.*)
+#    RedirectMatch 404 ^/\.(.*)
+
+#    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)/$ index.php/$1 [L]
+
+#    RewriteCond %{REQUEST_FILENAME} -f
+#    RewriteRule \.php$ index.php [L]
+
+    # Standard routes
+    RewriteRule ^ index.php [L]
+#</IfModule>
