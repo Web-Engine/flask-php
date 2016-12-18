@@ -22,24 +22,26 @@ class FlaskPHP
         }
     }
 
-    private function _route($rule, $func, $methods = '')
+    private function _route($rule, $func, $method = '')
     {
-        if (is_array($methods))
+        if (is_array($method))
         {
-            foreach ($methods as $method) {
-                $this->route($rule, $func, $method);
+            foreach ($method as $item) {
+                $this->route($rule, $func, $item);
             }
 
             return;
         }
 
+        $rule = str_replace('#', '\#', $rule);
+
         if (!isset($this->routes[$rule])) {
             $this->routes[$rule] = [];
         }
 
-        $methods = strtoupper($methods);
+        $method = strtoupper($method);
 
-        $this->routes[$rule][$methods] = $func;
+        $this->routes[$rule][$method] = $func;
     }
 
     public function get($rule, $func) {
