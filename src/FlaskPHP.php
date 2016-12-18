@@ -22,7 +22,7 @@ class FlaskPHP
         }
     }
 
-    private function _route($rule, $func, $methods = NULL)
+    private function _route($rule, $func, $methods = '')
     {
         if (is_array($methods))
         {
@@ -158,9 +158,9 @@ class FlaskPHP
                     $routeFunc = $func[$method];
                     break;
                 }
-                else if (isset($func[NULL]))
+                else if (isset($func['']))
                 {
-                    $routeFunc = $func[NULL];
+                    $routeFunc = $func[''];
                     break;
                 }
             }
