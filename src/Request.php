@@ -43,11 +43,19 @@ class Request {
     private $scriptRoot = '';
     private $isXhr = FALSE;
 
-    public static function request() {
+    /**
+     * @var Request
+     */
+    private static $_request;
 
+    public static function get() {
+        if (Request::$_request) return Request::$_request;
+
+        Request::$_request = new Request();
+        return Request::$_request;
     }
 
-    public function __construct($dir) {
+    private function __construct() {
         // get method
         $method = strtoupper($_SERVER['REQUEST_METHOD']);
         $this->method = $method;
@@ -114,12 +122,11 @@ class Request {
         $this->baseUrl = $baseUrl;
 
         // get script root
-        $dir = str_replace(DIRECTORY_SEPARATOR, '/', $dir);
-        $scriptRoot = substr($dir, strlen($_SERVER['DOCUMENT_ROOT']));
+        $scriptRoot = dirname($_SERVER['SCRIPT_NAME']);
         $this->scriptRoot = $scriptRoot;
 
         // get url root
-        $urlRoot = $domain . $scriptRoot . '/';
+        $urlRoot = $domain . $scriptRoot;
         $this->urlRoot = $urlRoot;
 
         // get path

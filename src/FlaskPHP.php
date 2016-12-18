@@ -8,12 +8,9 @@ class FlaskPHP
     private $dir;
     private $routes = [];
 
-    private $request;
-
     public function __construct($dir)
     {
         $this->dir = $dir;
-        $this->request = new Request($this->dir);
     }
 
     public function route($rule, $a, $b = NULL)
@@ -67,7 +64,9 @@ class FlaskPHP
 
     public function run()
     {
-        $path = $this->request->path;
+        $request = Request::get();
+
+        $path = $request->path;
 
         $routeFunc = null;
         $routeParam = null;
@@ -82,7 +81,7 @@ class FlaskPHP
             $patterns = [];
 
             for ($i = 0; $i < $count; $i++) {
-                $text = preg_quote($matches[0][$i]);
+                $text = $matches[0][$i];
                 $type = $matches[1][$i];
                 $name = $matches[2][$i];
 
@@ -114,7 +113,8 @@ class FlaskPHP
                         break;
                 }
 
-                $rule = str_replace($text, $regex, $rule, $cnt = 1);
+                $cnt = 1;
+                $rule = str_replace($text, $regex, $rule, $cnt);
 
                 array_push($patterns, [
                     'name'=> $name,
@@ -151,7 +151,7 @@ class FlaskPHP
 
                 $routeParam = $params;
 
-                $method = $this->request->method;
+                $method = $request->method;
 
                 if (isset($func[$method]))
                 {
