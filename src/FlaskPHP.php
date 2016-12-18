@@ -5,12 +5,9 @@ use ReflectionFunction;
 
 class FlaskPHP
 {
-    private $dir;
     private $routes = [];
 
-    public function __construct($dir)
-    {
-        $this->dir = $dir;
+    public function __construct() {
     }
 
     public function route($rule, $a, $b = NULL)

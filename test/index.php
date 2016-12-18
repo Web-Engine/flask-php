@@ -5,7 +5,7 @@ use FlaskPHP\FlaskPHP;
 use FlaskPHP\Template\PhpTemplate;
 use FlaskPHP\Template\TwigTemplate;
 
-$app = new FlaskPHP(__DIR__);
+$app = new FlaskPHP();
 
 $app->route('/', function () {
     return 'This is Index.';
