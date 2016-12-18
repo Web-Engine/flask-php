@@ -28,7 +28,7 @@ $app->route('/php', function () {
 });
 
 $app->get('/redirect', function () {
-    return redirect('/flask-php/test/php');
+    return redirect(url_for('/php'));
 });
 
 $app->get('/get/<int:int>', function ($int) {
