@@ -185,4 +185,13 @@ class Request {
             return NULL;
         }
     }
+
+    public function __isset($name)
+    {
+        if (substr($name, 0, 1) != '_' && isset($this->{$name})) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
 }
