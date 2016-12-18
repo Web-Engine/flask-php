@@ -13,6 +13,10 @@ class Response {
         $this->setContentType($contentType, $charset);
     }
 
+    public function setCookie($name, $value = NULL, $expire = NULL, $path = NULL, $domain = NULL, $secure = NULL, $httponly = NULL) {
+        setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
+    }
+
     public function setHeader($header, $content) {
         $this->headers[$header] = $content;
     }
