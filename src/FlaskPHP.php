@@ -68,9 +68,9 @@ class FlaskPHP
 
         $path = $request->path;
 
-        $routeFunc = null;
-        $routeParam = null;
-        $params = null;
+        $routeFunc = NULL;
+        $routeParam = NULL;
+        $params = NULL;
 
         foreach ($this->routes as $rule => $func)
         {

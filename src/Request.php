@@ -114,7 +114,7 @@ class Request {
         $this->url = $url;
 
         // get base url
-        $baseUrl = strstr($url, '?', true);
+        $baseUrl = strstr($url, '?', TRUE);
         if ($baseUrl === FALSE) {
             $baseUrl = $url;
         }
@@ -159,7 +159,7 @@ class Request {
     private $_jsonErrorMsg = '';
 
     public function json($force = FALSE) {
-        if (!$force || !$this->isXhr) return null;
+        if (!$force || !$this->isXhr) return NULL;
         if ($this->_json != NULL) return $this->_json;
         if ($this->_jsonError != NULL) return NULL;
 

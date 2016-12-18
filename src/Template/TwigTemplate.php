@@ -8,7 +8,7 @@ class TwigTemplate extends Template
 {
     private static $cachePath = NULL;
 
-    protected static function _render($path, $params = array())
+    protected static function _render($path, $params = [])
     {
         $dir = dirname($path);
         $file = basename($path);

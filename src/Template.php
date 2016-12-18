@@ -19,13 +19,13 @@ abstract class Template
         return $callerDir . '/' . $path;
     }
 
-    public static function render($path, $params = array()) {
+    public static function render($path, $params = []) {
         $path = self::getPath($path);
 
         return static::_render($path, $params);
     }
 
-    protected static function _render($path, $params = array()) {
+    protected static function _render($path, $params = []) {
         throw new Exception('Cannot use Template\'s render method.');
     }
 }

@@ -4,7 +4,7 @@ use FlaskPHP\Template;
 
 class PhpTemplate extends Template
 {
-    protected static function _render($path, $params = array())
+    protected static function _render($path, $params = [])
     {
         extract($params);
 
