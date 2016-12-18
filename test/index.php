@@ -27,8 +27,12 @@ $app->route('/php', function () {
     ]);
 });
 
-$app->get('/get/<int:int>', function ($int) {
+$app->get('/redirect', function () {
     return redirect('/flask-php/test/php');
+});
+
+$app->get('/get/<int:int>', function ($int) {
+    var_dump($int);
 });
 
 $app->get('/get/<float:float>', function ($float) {
@@ -39,12 +43,12 @@ $app->get('/get/<string:str>', function ($str) {
     return $str;
 });
 
-$app->post('/post/<int:int>', function ($int) {
-    return $int;
+$app->post('/post/<string:text>', function ($text) {
+    return "input: {$text}";
 });
 
-$app->delete('/delete/<float:float>', function ($float) {
-    return $float;
+$app->delete('/delete/<string:text>', function ($text) {
+    return "input: {$text}";
 });
 
 $app->run();

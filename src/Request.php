@@ -1,56 +1,179 @@
 <?php
 namespace FlaskPHP;
 
+/**
+ * @property string method
+ * @property array headers
+ * @property array args
+ * @property array form
+ * @property array values
+ * @property array cookies
+ * @property array files
+ * @property string data
+ *
+ * @property string host
+ * @property bool isHttps
+ * @property string scheme
+ * @property string domain
+ * @property string path
+ * @property string url
+ * @property string baseUrl
+ * @property string urlRoot
+ * @property string scriptRoot
+ * @property bool isXhr
+ */
 class Request {
-    private $vars = '';
+    private $method = '';
+    private $headers = [];
+    private $args = [];
+    private $form = [];
+    private $values = [];
+    private $cookies = [];
+    private $files = [];
+    private $data = '';
 
-    private $props = [
-        'method' => '',
-        'path' => '',
-    ];
+    private $host = '';
+    private $isHttps = FALSE;
+    private $scheme = '';
+    private $domain = '';
+    private $path = '';
+    private $url =  '';
+    private $baseUrl = '';
+    private $urlRoot = '';
+    private $scriptRoot = '';
+    private $isXhr = FALSE;
+
+    public static function request() {
+
+    }
 
     public function __construct($dir) {
+        // get method
         $method = strtoupper($_SERVER['REQUEST_METHOD']);
-        $vars = [];
+        $this->method = $method;
 
-        if ($method != 'GET') {
-            parse_str(file_get_contents("php://input"), $vars);
-        }
-
-        $vars += $_GET;
-
-        $path = '/';
-
-        if (isset($_SERVER['REQUEST_URI']) && !empty($_SERVER['REQUEST_URI'])) {
-            $requestUri = $_SERVER['REQUEST_URI'];
-
-            $path = strstr($_SERVER['REQUEST_URI'], '?', true);
-            if ($path === FALSE) {
-                $path = $requestUri;
+        // get headers
+        if (!function_exists('apache_request_headers')) {
+            $headers = [];
+            foreach ($_SERVER as $name => $value)
+            {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
             }
+        } else {
+            $headers = apache_request_headers();
         }
 
-        $dir = preg_replace('/' . preg_quote(DIRECTORY_SEPARATOR) . '/', '/', $dir);
-        $dir = substr($dir, strlen($_SERVER['DOCUMENT_ROOT']));
-        $path = substr($path, strlen($dir));
+        $this->headers = $headers;
 
-        $this->vars = $vars;
-        $this->props['method'] = $method;
-        $this->props['path'] = $path;
+        // get args
+        $this->args = $_GET;
+
+        // get body
+        $data = file_get_contents("php://input");
+        $this->data = $data;
+
+        // get form
+        parse_str($data, $form);
+        $this->form = $form;
+
+        // get values
+        $this->values = $form + $_GET;
+
+        // get files
+        $this->files = $_FILES;
+
+        // get cookies
+        $this->cookies = $_COOKIE;
+
+        // get host
+        $host = $_SERVER['HTTP_HOST'];
+        $this->host = $host;
+
+        // get domain
+        $isHttps = (isset($_SERVER['HTTPS']) && !in_array($_SERVER['HTTPS'], ['off', 'no']));
+        $this->isHttps = $isHttps;
+
+        $scheme = isset($_SERVER['REQUEST_SCHEME'])  ? $_SERVER['REQUEST_SCHEME'] : $isHttps ? 'https' : 'http';
+        $this->scheme = $scheme;
+
+        $domain = "{$scheme}://{$host}";
+        $this->domain = $domain;
+
+        // get url
+        $url = $domain . $_SERVER['REQUEST_URI'];
+        $this->url = $url;
+
+        // get base url
+        $baseUrl = strstr($url, '?', true);
+        if ($baseUrl === FALSE) {
+            $baseUrl = $url;
+        }
+
+        $this->baseUrl = $baseUrl;
+
+        // get script root
+        $dir = str_replace(DIRECTORY_SEPARATOR, '/', $dir);
+        $scriptRoot = substr($dir, strlen($_SERVER['DOCUMENT_ROOT']));
+        $this->scriptRoot = $scriptRoot;
+
+        // get url root
+        $urlRoot = $domain . $scriptRoot . '/';
+        $this->urlRoot = $urlRoot;
+
+        // get path
+        $path = $_SERVER['REQUEST_URI'];
+        $path = substr($path, strlen($scriptRoot));
+
+        if (empty($path)) {
+            $path = '/';
+        }
+
+        $this->path = $path;
+
+        $this->isXhr = isset($headers['Content-Type']) && $headers['Content-Type'] === 'XMLHttpRequest';
     }
 
-    public function is($key) {
-        return isset($this->vars[$key]);
+    public function args($key, $default) {
+        return isset($this->args[$key]) ? $this->args[$key] : $default;
     }
 
-    public function get($key) {
-        return $this->vars[$key];
+    public function form($key, $default) {
+        return isset($this->form[$key]) ? $this->form[$key] : $default;
+    }
+
+    public function values($key, $default) {
+        return isset($this->values[$key]) ? $this->values[$key] : $default;
+    }
+
+    private $_json = NULL;
+    private $_jsonError = 0;
+    private $_jsonErrorMsg = '';
+
+    public function json($force = FALSE) {
+        if (!$force || !$this->isXhr) return null;
+        if ($this->_json != NULL) return $this->_json;
+        if ($this->_jsonError != NULL) return NULL;
+
+        $this->_json = json_decode($this->data);
+        $this->_jsonError = json_last_error();
+
+        return $this->_json;
+    }
+
+    public function jsonError() {
+        return $this->_jsonError;
+    }
+
+    public function jsonErrorMsg() {
+        return $this->_jsonErrorMsg;
     }
 
     public function __get($name)
     {
-        if (isset($this->props[$name])) {
-            return $this->props[$name];
+        if (substr($name, 0, 1) != '_' && isset($this->{$name})) {
+            return $this->{$name};
         } else {
             return NULL;
         }

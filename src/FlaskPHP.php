@@ -114,7 +114,7 @@ class FlaskPHP
                         break;
                 }
 
-                $rule = preg_replace('#' . $text . '#', $regex, $rule);
+                $rule = str_replace($text, $regex, $rule, $cnt = 1);
 
                 array_push($patterns, [
                     'name'=> $name,
