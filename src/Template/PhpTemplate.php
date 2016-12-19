@@ -1,5 +1,6 @@
 <?php
 namespace FlaskPHP\Template;
+use FlaskPHP\Response;
 use FlaskPHP\Template;
 
 class PhpTemplate extends Template
@@ -12,6 +13,6 @@ class PhpTemplate extends Template
         include $path;
         $content = ob_get_clean();
 
-        return $content;
+        return new Response($content);
     }
 }

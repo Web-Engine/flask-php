@@ -25,6 +25,12 @@ abstract class Template
         return static::_render($path, $params);
     }
 
+    /**
+     * @param $path
+     * @param array $params
+     * @return Response
+     * @throws Exception
+     */
     protected static function _render($path, $params = []) {
         throw new Exception('Cannot use Template\'s render method.');
     }
