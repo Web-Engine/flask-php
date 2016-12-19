@@ -6,7 +6,9 @@ class Response {
 
     private $content = '';
     private $contentLength = 0;
-    private $charset = NULL;
+
+    private $contentType = '';
+    private $charset = '';
 
     public function __construct($content, $contentType = 'text/html', $charset='utf-8') {
         $this->setContent($content);
@@ -17,12 +19,24 @@ class Response {
         setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
     }
 
-    public function setHeader($header, $content) {
+    public function setHeader($header, $content = NULL) {
+        if ($content === NULL) {
+            if (strpos($header, ':') === FALSE) {
+                array_push($this->headers, $header);
+                return;
+            }
+
+            list($header, $content) = explode(':', $header, 2);
+        }
+
+        $header = str_replace(' ', '-', ucwords(str_replace('-', ' ', $header)));
         $this->headers[$header] = $content;
     }
 
-    public function setContentType($type, $charset='utf-8') {
-        $this->setHeader('Content-Type', "{$type}; charset={$charset}");
+    public function setContentType($contentType, $charset='utf-8') {
+        $this->contentType = $contentType;
+        $this->charset = $charset;
+        $this->setHeader('Content-Type', "{$contentType}; charset={$charset}");
     }
 
     public function getContentType() {
@@ -31,6 +45,10 @@ class Response {
 
     public function getHeader($header) {
         return $this->headers[$header];
+    }
+
+    public function getAllHeader($header) {
+        return $this->headers;
     }
 
     public function getContent() {
